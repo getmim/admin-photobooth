@@ -30,11 +30,12 @@
             </div>
         </div>
         <div class="col-md-9">
+            <?php $smsable = module_exists('admin-photobooth-text'); ?>
             <?php if($pbooths): ?>
                 <?php $csrf = $form->csrfToken(); ?>
                 <ul class="list-group list-group-flush card mb-3">
                     <?php foreach($pbooths as $pbooth): ?>
-                        <li class="list-group-item">
+                        <li class="list-group-item" id="pbooth-<?= $pbooth->id ?>">
                             <div class="d-flex w-100 justify-content-between">
                                 <h5 class="mb-1">
                                     <?= $pbooth->fullname->safe ?> <small>( <?= $pbooth->phone->safe ?> )</small>
@@ -44,6 +45,11 @@
                                         <a href="<?= $this->router->to('adminPhotoboothEdit', ['id'=>$pbooth->id]) ?>" class="btn btn-secondary" title="Edit">
                                             <i class="fas fa-edit"></i>
                                         </a>
+                                        <?php if($smsable): ?>
+                                        <a href="#" class="btn btn-secondary btn-sms" data-id="<?= $pbooth->id ?>" title="Send SMS">
+                                            <i class="fas fa-sms"></i>
+                                        </a>
+                                        <?php endif; ?>
                                         <div class="btn-group btn-group-sm" role="group">
                                             <button id="pbooth-action-<?= $pbooth->id ?>" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
                                             <div class="dropdown-menu" aria-labelledby="pbooth-action-<?= $pbooth->id ?>">
@@ -67,6 +73,13 @@
                                     <i class="fas fa-user"></i>
                                     <?= $pbooth->user->fullname->safe ?>
                                 </span>
+                                <?php if($smsable): ?>
+                                    &middot;
+                                    <span title="Texted">
+                                        <i class="fas fa-sms"></i>
+                                        <span id="phbooth-sms-<?= $pbooth->id ?>"><?= $pbooth->texted->format() ?></span>
+                                    </span>
+                                <?php endif; ?>
                             </small>
                         </li>
                     <?php endforeach; ?>
@@ -79,3 +92,49 @@
         </div>
     </div>
 </div>
+
+
+<?php if($smsable): ?>
+<script>
+    document.addEventListener('DOMContentLoaded', function(){
+        $('.btn-sms').click(function(){
+            var id     = $(this).data('id');
+            var modal  = $('#modal-sms');
+            var action = modal.data('action').replace('-id-', id);
+            
+            modal.attr('action', action);
+
+            // set the text
+            $('#admin-photobooth-sms-fld-content').val('TODO');
+
+            $('#modal-sms').modal();
+            return false;
+        });
+        <?php if($sms_error = $this->req->get('sms-error')): ?>
+        $.dialog.alert('Whoops!', '<?= hs($sms_error) ?>');
+        <?php endif; ?>
+    }, false);
+</script>
+<form method="POST" class="modal fade" tabindex="-1" role="dialog" id="modal-sms" data-action="<?= $this->router->to('adminPhotoboothText', ['id'=>'-id-']) ?>">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Send SMS</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <?= $sms_form->csrfField('noob') ?>
+                <?= $sms_form->field('content') ?>
+                <?php $reff = preg_replace('![\?&]sms-error=.+!', '', $this->req->url); ?>
+                <input type="hidden" name="reff" value="<?= hs($reff) ?>">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button class="btn btn-primary">Send</button>
+            </div>
+        </div>
+    </div>
+</form>
+<?php endif; ?>

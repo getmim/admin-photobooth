@@ -108,6 +108,9 @@ class PhotoboothController extends \Admin\Controller
             );
         }
 
+        if(module_exists('admin-photobooth-text'))
+            $params['sms_form'] = new Form('admin.photobooth.sms');
+        
         $this->resp('photobooth/index', $params);
     }
 
