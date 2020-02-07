@@ -7,6 +7,7 @@
 
 namespace AdminPhotobooth\Controller;
 
+use Event\Model\Event;
 use LibFormatter\Library\Formatter;
 use LibForm\Library\Form;
 use LibPagination\Library\Paginator;
@@ -79,9 +80,13 @@ class PhotoboothController extends \Admin\Controller
         if(!$this->can_i->manage_photobooth)
             return $this->show404();
 
+        $ap_event = module_exists('admin-photobooth-event');
+
         $cond = $pcond = [];
         if($q = $this->req->getQuery('q'))
             $pcond['q'] = $cond['q'] = $q;
+        if($ap_event && $event = $this->req->getQuery('event'))
+            $pcond['event'] = $cond['event'] = $event;
 
         list($page, $rpp) = $this->req->getPager(25, 50);
 
@@ -90,8 +95,15 @@ class PhotoboothController extends \Admin\Controller
             $pbooths = Formatter::formatMany('photobooth', $pbooths, ['user']);
 
         $params             = $this->getParams('Photobooth');
-        $params['pbooths']   = $pbooths;
+        $params['pbooths']  = $pbooths;
         $params['form']     = new Form('admin.photobooth.index');
+        $params['event']    = [];
+
+        if(isset($cond['event'])){
+            $event = Event::getOne(['id'=>$cond['event']]);
+            if($event)
+                $params['event'][$event->id] = $event->title;
+        }
 
         $params['form']->validate( (object)$this->req->get() );
 

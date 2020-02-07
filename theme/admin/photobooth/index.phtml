@@ -18,6 +18,9 @@
                 <form method="GET" class="card-body">
                     <h5 class="card-title">Search</h5>
                     <?= $form->field('q') ?>
+                    <?php if(module_exists('admin-photobooth-event')): ?>
+                        <?= $form->field('event', $event) ?>
+                    <?php endif; ?>
                     <div class="text-right">
                         <button class="btn btn-primary">Find</button>
                     </div>
