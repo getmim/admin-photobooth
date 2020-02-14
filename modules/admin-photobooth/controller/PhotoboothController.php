@@ -91,8 +91,12 @@ class PhotoboothController extends \Admin\Controller
         list($page, $rpp) = $this->req->getPager(25, 50);
 
         $pbooths = Photobooth::get($cond, $rpp, $page, ['fullname'=>true]) ?? [];
-        if($pbooths)
-            $pbooths = Formatter::formatMany('photobooth', $pbooths, ['user']);
+        if($pbooths){
+            $fmt = ['user'];
+            if(module_exists('photobooth-event'))
+                $fmt[] = 'event';
+            $pbooths = Formatter::formatMany('photobooth', $pbooths, $fmt);
+        }
 
         $params             = $this->getParams('Photobooth');
         $params['pbooths']  = $pbooths;
