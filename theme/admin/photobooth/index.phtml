@@ -85,12 +85,14 @@
                                 <?php endif; ?>
                                 <?php if(isset($pbooth->event) && is_object($pbooth->event)): ?>
                                     <br>
-                                    <i class="fas fa-calendar-week"></i>
-                                    <?php if(isset($pbooth->event->page)): ?>
-                                        <a href="<?= $pbooth->event->page ?>" target="_blank"><?= $pbooth->event->title->safe ?></a>
-                                    <?php else: ?>
-                                        <?= $pbooth->event->title->safe ?>
-                                    <?php endif; ?>
+                                    <span title="Event">
+                                        <i class="fas fa-calendar-week"></i>
+                                        <?php if(isset($pbooth->event->page)): ?>
+                                            <a href="<?= $pbooth->event->page ?>" target="_blank"><?= $pbooth->event->title->safe ?></a>
+                                        <?php else: ?>
+                                            <?= $pbooth->event->title->safe ?>
+                                        <?php endif; ?>
+                                    </span>
                                 <?php endif; ?>
                             </small>
                         </li>
