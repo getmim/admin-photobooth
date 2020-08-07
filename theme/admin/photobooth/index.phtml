@@ -53,6 +53,11 @@
                                             <i class="fas fa-sms"></i>
                                         </a>
                                         <?php endif; ?>
+                                        <?php if(isset($pbooth->page)): ?>
+                                            <a href="<?= $pbooth->page ?>" class="btn btn-secondary" title="View Page" target="_blank">
+                                                <i class="fas fa-external-link-square-alt"></i>
+                                            </a>
+                                        <?php endif; ?>
                                         <div class="btn-group btn-group-sm" role="group">
                                             <button id="pbooth-action-<?= $pbooth->id ?>" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
                                             <div class="dropdown-menu" aria-labelledby="pbooth-action-<?= $pbooth->id ?>">
