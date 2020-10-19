@@ -123,8 +123,18 @@
             
             modal.attr('action', action);
 
+            let hideNow = $('#modal-sms-send,#modal-sms-form').hide();
+            let showNow = $('#modal-sms-loader').show();
+
             // set the text
-            $('#admin-photobooth-sms-fld-content').val('TODO');
+            let dTextURL = '<?= $this->router->to('adminPhotoboothPreText', ['id'=>'ID']) ?>'.replace('ID', id)
+            $.get(dTextURL, res => {
+                if(res && !res.error){
+                    $('#admin-photobooth-sms-fld-content').val(res.data)
+                    hideNow.show();
+                    showNow.hide();
+                }
+            })
 
             $('#modal-sms').modal();
             return false;
@@ -134,6 +144,7 @@
         <?php endif; ?>
     }, false);
 </script>
+
 <form method="POST" class="modal fade" tabindex="-1" role="dialog" id="modal-sms" data-action="<?= $this->router->to('adminPhotoboothText', ['id'=>'-id-']) ?>">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -145,13 +156,20 @@
             </div>
             <div class="modal-body">
                 <?= $sms_form->csrfField('noob') ?>
-                <?= $sms_form->field('content') ?>
-                <?php $reff = preg_replace('![\?&]sms-error=.+!', '', $this->req->url); ?>
-                <input type="hidden" name="reff" value="<?= hs($reff) ?>">
+                <div id="modal-sms-form" class="hidden">
+                    <?= $sms_form->field('content') ?>
+                    <?php $reff = preg_replace('![\?&]sms-error=.+!', '', $this->req->url); ?>
+                    <input type="hidden" name="reff" value="<?= hs($reff) ?>">
+                </div>
+                <div id="modal-sms-loader">
+                    <div class="progress">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width:100%">Preparing...</div>
+                    </div>
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                <button class="btn btn-primary">Send</button>
+                <button class="btn btn-primary" id="modal-sms-send">Send</button>
             </div>
         </div>
     </div>
