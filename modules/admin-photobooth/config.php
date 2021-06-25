@@ -2,7 +2,7 @@
 
 return [
     '__name' => 'admin-photobooth',
-    '__version' => '0.2.1',
+    '__version' => '0.3.0',
     '__git' => 'git@github.com:getmim/admin-photobooth.git',
     '__license' => 'MIT',
     '__author' => [

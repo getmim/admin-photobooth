@@ -2,7 +2,7 @@
 /**
  * PhotoboothController
  * @package admin-photobooth
- * @version 0.0.1
+ * @version 0.3.0
  */
 
 namespace AdminPhotobooth\Controller;
@@ -40,6 +40,18 @@ class PhotoboothController extends \Admin\Controller
             if(!$pbooth)
                 return $this->show404();
             $params = $this->getParams('Edit Photobooth');
+
+            if(module_exists('admin-photobooth-event')){
+                $event_id = $pbooth->event;
+                if($event_id){
+                    $event = Event::getOne(['id' => $event_id]);
+                    if($event) {
+                        $params['events'] = [
+                            $event->id => $event->title
+                        ];
+                    }
+                }
+            }
         }else{
             $params = $this->getParams('Create New Photobooth');
         }
